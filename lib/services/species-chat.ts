@@ -1,8 +1,7 @@
 // Using Gemini and using fetch rather than client
 const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const SPECIES_INSTRUCTION = `You are a helpful species and animal information assistant. Only answer questions about animals, species, wildlife, habitats, diets, behavior, evolution, taxonomy, conservation, and related biology. If a question is unrelated, politely explain that you only handle species-related queries and invite the user to ask about an animal or species instead. Be accurate, concise, and acknowledge uncertainty rather than inventing facts.`;
-const FALLBACK_RESPONSE =
-  "I’m unable to reach the species knowledge service right now. Please try again shortly.";
+const FALLBACK_RESPONSE = "I’m unable to reach the species knowledge service right now. Please try again shortly.";
 
 // Queries the Gemini API
 export async function generateResponse(message: string): Promise<string> {
@@ -14,7 +13,9 @@ export async function generateResponse(message: string): Promise<string> {
   // Make the post request to Gemini
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(
+        apiKey,
+      )}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,7 +41,7 @@ export async function generateResponse(message: string): Promise<string> {
       .join("")
       .trim();
 
-    return answer || FALLBACK_RESPONSE;
+    return answer ?? FALLBACK_RESPONSE;
   } catch (error) {
     console.error("Gemini species chat request failed:", error);
     return FALLBACK_RESPONSE;

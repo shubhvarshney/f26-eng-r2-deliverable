@@ -40,7 +40,10 @@ export default function SpeciesChatbot() {
 
       setChatLog((currentLog) => [
         ...currentLog,
-        { role: "bot", content: response.ok ? (data.response ?? "No response received.") : (data.error ?? "Unable to get a response.") },
+        {
+          role: "bot",
+          content: response.ok ? data.response ?? "No response received." : data.error ?? "Unable to get a response.",
+        },
       ]);
     } catch {
       setChatLog((currentLog) => [
@@ -52,7 +55,7 @@ export default function SpeciesChatbot() {
     }
   };
 
-return (
+  return (
     <>
       <TypographyH2>Species Chatbot</TypographyH2>
       <div className="mt-4 flex gap-4">

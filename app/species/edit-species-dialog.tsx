@@ -29,11 +29,21 @@ const kingdoms = z.enum(["Animalia", "Plantae", "Fungi", "Protista", "Archaea", 
 
 const speciesSchema = z.object({
   scientific_name: z.string().trim().min(1),
-  common_name: z.string().nullable().transform((value) => (!value || value.trim() === "" ? null : value.trim())),
+  common_name: z
+    .string()
+    .nullable()
+    .transform((value) => (!value || value.trim() === "" ? null : value.trim())),
   kingdom: kingdoms,
   total_population: z.number().int().positive().min(1).nullable(),
-  image: z.string().url().nullable().transform((value) => (!value || value.trim() === "" ? null : value.trim())),
-  description: z.string().nullable().transform((value) => (!value || value.trim() === "" ? null : value.trim())),
+  image: z
+    .string()
+    .url()
+    .nullable()
+    .transform((value) => (!value || value.trim() === "" ? null : value.trim())),
+  description: z
+    .string()
+    .nullable()
+    .transform((value) => (!value || value.trim() === "" ? null : value.trim())),
 });
 
 type FormData = z.infer<typeof speciesSchema>;
@@ -61,10 +71,7 @@ export default function EditSpeciesDialog({ species }: { species: Species }) {
 
   const onSubmit = async (input: FormData) => {
     const supabase = createBrowserSupabaseClient();
-    const { error } = await supabase
-      .from("species")
-      .update(input)
-      .eq("id", species.id);
+    const { error } = await supabase.from("species").update(input).eq("id", species.id);
 
     if (error) {
       return toast({
@@ -106,7 +113,9 @@ export default function EditSpeciesDialog({ species }: { species: Species }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Scientific Name</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -119,7 +128,9 @@ export default function EditSpeciesDialog({ species }: { species: Species }) {
                   return (
                     <FormItem>
                       <FormLabel>Common Name</FormLabel>
-                      <FormControl><Input value={value ?? ""} {...rest} /></FormControl>
+                      <FormControl>
+                        <Input value={value ?? ""} {...rest} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   );
@@ -132,10 +143,18 @@ export default function EditSpeciesDialog({ species }: { species: Species }) {
                   <FormItem>
                     <FormLabel>Kingdom</FormLabel>
                     <Select onValueChange={(value) => field.onChange(kingdoms.parse(value))} value={field.value}>
-                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
                       <SelectContent>
                         <SelectGroup>
-                          {kingdoms.options.map((kingdom) => <SelectItem key={kingdom} value={kingdom}>{kingdom}</SelectItem>)}
+                          {kingdoms.options.map((kingdom) => (
+                            <SelectItem key={kingdom} value={kingdom}>
+                              {kingdom}
+                            </SelectItem>
+                          ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -152,7 +171,12 @@ export default function EditSpeciesDialog({ species }: { species: Species }) {
                     <FormItem>
                       <FormLabel>Total population</FormLabel>
                       <FormControl>
-                        <Input type="number" value={value ?? ""} {...rest} onChange={(event) => field.onChange(+event.target.value)} />
+                        <Input
+                          type="number"
+                          value={value ?? ""}
+                          {...rest}
+                          onChange={(event) => field.onChange(+event.target.value)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -167,7 +191,9 @@ export default function EditSpeciesDialog({ species }: { species: Species }) {
                   return (
                     <FormItem>
                       <FormLabel>Image URL</FormLabel>
-                      <FormControl><Input value={value ?? ""} {...rest} /></FormControl>
+                      <FormControl>
+                        <Input value={value ?? ""} {...rest} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   );
@@ -181,16 +207,22 @@ export default function EditSpeciesDialog({ species }: { species: Species }) {
                   return (
                     <FormItem>
                       <FormLabel>Description</FormLabel>
-                      <FormControl><Textarea value={value ?? ""} {...rest} /></FormControl>
+                      <FormControl>
+                        <Textarea value={value ?? ""} {...rest} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   );
                 }}
               />
               <div className="flex">
-                <Button type="submit" className="mr-2 flex-auto">Save Changes</Button>
+                <Button type="submit" className="mr-2 flex-auto">
+                  Save Changes
+                </Button>
                 <DialogClose asChild>
-                  <Button type="button" variant="secondary" className="ml-2 flex-auto">Cancel</Button>
+                  <Button type="button" variant="secondary" className="ml-2 flex-auto">
+                    Cancel
+                  </Button>
                 </DialogClose>
               </div>
             </div>

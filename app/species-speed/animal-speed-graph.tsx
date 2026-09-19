@@ -1,17 +1,17 @@
 /* eslint-disable */
 "use client";
-import { useRef, useEffect, useState  } from "react";
-import { select } from "d3-selection";
-import { scaleBand, scaleLinear, scaleOrdinal } from "d3-scale";
 import { max } from "d3-array";
 import { axisBottom, axisLeft } from "d3-axis"; // D3 is a JavaScript library for data visualization: https://d3js.org/
 import { csv } from "d3-fetch";
+import { scaleBand, scaleLinear, scaleOrdinal } from "d3-scale";
+import { select } from "d3-selection";
+import { useEffect, useRef, useState } from "react";
 
 // Example data: Only the first three rows are provided as an example
 // Add more animals or change up the style as you desire
 
 // Interface with the three main variables
-interface AnimalDatum  {
+interface AnimalDatum {
   name: string;
   speed: number;
   diet: "herbivore" | "omnivore" | "carnivore";
@@ -66,30 +66,27 @@ export default function AnimalSpeedGraph() {
     const containerHeight = graphRef.current?.clientHeight ?? 500;
 
     // Set up chart dimensions and margins
-    const width = Math.max(containerWidth, 600, animalData.length * 40 + 160); 
+    const width = Math.max(containerWidth, 600, animalData.length * 40 + 160);
     const height = Math.max(containerHeight, 400); // Minimum height of 400px
     const margin = { top: 70, right: 60, bottom: 80, left: 100 };
 
     // Create the SVG element where D3 will draw the chart
     // https://github.com/d3/d3-selection
-    const svg  = select(graphRef.current!)
-      .append<SVGSVGElement>("svg")
-      .attr("width", width)
-      .attr("height", height);
+    const svg = select(graphRef.current!).append<SVGSVGElement>("svg").attr("width", width).attr("height", height);
 
     // Get the dimensions of just the chart
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
-    
+
     // Trnaslate the chart to account for the margins
     const chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-    
+
     // Get animal names into horizontal positions
     const x = scaleBand<string>()
       .domain(animalData.map((animal) => animal.name))
       .range([0, chartWidth])
       .padding(0.2);
-    
+
     // Get animal speeds into vertical positions
     const y = scaleLinear()
       .domain([0, max(animalData, (animal) => animal.speed) ?? 0])
@@ -161,7 +158,6 @@ export default function AnimalSpeedGraph() {
         .attr("fill", color(diet as AnimalDatum["diet"]));
       item.append("text").attr("x", 16).attr("y", 10).style("font-size", "11px").text(diet);
     });
-
   }, [animalData]);
 
   // Return the graph
