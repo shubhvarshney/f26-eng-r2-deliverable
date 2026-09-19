@@ -1,4 +1,3 @@
-/* eslint-disable */
 "use client";
 import { TypographyH2, TypographyP } from "@/components/ui/typography";
 import { useRef, useState } from "react";
@@ -8,6 +7,7 @@ export default function SpeciesChatbot() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<{ role: "user" | "bot"; content: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const handleInput = () => {
     const textarea = textareaRef.current;
     if (textarea) {
@@ -16,9 +16,41 @@ export default function SpeciesChatbot() {
     }
   };
 
-const handleSubmit = async () => {
-  // TODO: Implement this function
-}
+  const handleSubmit = async () => {
+    // Don't submit in certain cases
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage || isLoading) return;
+
+    // Clearing input and adding message to the log
+    setMessage("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
+    setChatLog((currentLog) => [...currentLog, { role: "user", content: trimmedMessage }]);
+    setIsLoading(true);
+
+    // Getting a response from the API
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmedMessage }),
+      });
+      const data = (await response.json()) as { response?: string; error?: string };
+
+      setChatLog((currentLog) => [
+        ...currentLog,
+        { role: "bot", content: response.ok ? (data.response ?? "No response received.") : (data.error ?? "Unable to get a response.") },
+      ]);
+    } catch {
+      setChatLog((currentLog) => [
+        ...currentLog,
+        { role: "bot", content: "Unable to reach the species chat service. Please try again." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 return (
     <>
@@ -66,6 +98,13 @@ return (
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onInput={handleInput}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                void handleSubmit();
+              }
+            }}
+            disabled={isLoading}
             rows={1}
             placeholder="Ask about a species..."
             className="w-full resize-none overflow-hidden rounded border border-border bg-background p-2 text-sm text-foreground focus:outline-none"
@@ -73,9 +112,10 @@ return (
           <button
             type="button"
             onClick={() => void handleSubmit()}
+            disabled={isLoading}
             className="mt-2 rounded bg-primary px-4 py-2 text-background transition hover:opacity-90"
           >
-            Enter
+            {isLoading ? "Thinking..." : "Enter"}
           </button>
         </div>
       </div>

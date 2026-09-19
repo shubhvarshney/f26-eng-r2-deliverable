@@ -109,6 +109,7 @@ git clone git@github.com:hcs-t4sg/f25-eng-r2-deliverable.git
    - `NEXT_PUBLIC_SUPABASE_URL`: From Project Settings > Data API > Project URL.
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: From Project Settings > API Keys > Legacy API Keys > `anon` `public`.
    - `SECRET_SUPABASE_CONNECTION_STRING`: Project Overview > Connect (in the nav bar)> Direct connection. Replace `[YOUR-PASSWORD]` with your database password.
+  - `GEMINI_API_KEY`: Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey). Keep this key private and do not commit it.
      - If you insist on using special characters in your password you will need to replace them with the **percent-encoded** version ([see this reference](https://stackoverflow.com/a/76551917))
 
    The final result should look something like this:
@@ -118,6 +119,7 @@ git clone git@github.com:hcs-t4sg/f25-eng-r2-deliverable.git
    NEXT_PUBLIC_SUPABASE_URL="https://abcdefghijklmnopqrst.supabase.co"
    NEXT_PUBLIC_SUPABASE_ANON_KEY="longlonglongstring"
    SECRET_SUPABASE_CONNECTION_STRING="postgresql://postgres:YourDatabasePasswordHere@db.abcdefghijklmnopqrst.supabase.co:5432/postgres"
+  GEMINI_API_KEY="your-gemini-api-key"
    ```
 
    You should not share these keys publicly, especially the `SECRET_SUPABASE_CONNECTION_STRING`.
